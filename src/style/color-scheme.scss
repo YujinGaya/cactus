@@ -1,0 +1,16 @@
+@use 'variables';
+
+// Color
+:root {
+  @each $name, $light, $_ in variables.$colors {
+    --#{$name}: #{$light};
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    @each $name, $_, $dark in variables.$colors {
+      --#{$name}: #{$dark};
+    }
+  }
+}
