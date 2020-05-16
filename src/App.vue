@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import { useColorScheme } from '@/hooks/colorScheme';
+import { useColorScheme } from '@/use/colorScheme';
 
 export default {
   setup() {
