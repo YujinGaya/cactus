@@ -72,7 +72,7 @@ export default {
     display: flex;
     cursor: default;
 
-    background-color: var(--background-secondary);
+    background-color: var(--background-primary);
     backdrop-filter: saturate(50%) blur(20px);
 
     border-top: 1px solid var(--border);
@@ -80,7 +80,7 @@ export default {
     %icon {
       height: 36px;
       background-color: var(--background-button);
-      color: var(--primary);
+      color: var(--text-primary);
       border-radius: 8px;
       display: flex;
     }
@@ -90,7 +90,7 @@ export default {
       width: 36px;
       .plus {
         position: relative;
-        top: 7px;
+        top: 5px;
         margin: 0 auto;
       }
 
@@ -105,7 +105,7 @@ export default {
 
     .account-edit {
       @extend %icon;
-      padding: 9px 12px;
+      padding: 6px 12px;
       .edit {
         position: relative;
         margin: 0 auto;

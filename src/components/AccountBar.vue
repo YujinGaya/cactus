@@ -16,9 +16,12 @@ export default {
 
 <style lang="scss" scoped>
 #account-bar {
-  background-color: var(--background-secondary);
-  min-width: 260px;
+  background-color: var(--background-primary);
+  height: 100vh;
   display: flex;
   flex-direction: column;
+
+  user-select: none;
+  cursor: default;
 }
 </style>

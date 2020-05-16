@@ -1,7 +1,7 @@
 <template>
   <div class="account-bar-account" :class="{ 'is-active': hasSelected }">
-    <Icon class="icon"/>
-    <div class="label">
+    <AccountBarAccountIcon class="icon"/>
+    <div class="detail">
       <div class="name">{{ name }}</div>
       <div class="amount">{{ amount }}</div>
     </div>
@@ -9,10 +9,10 @@
 </template>
 
 <script>
-import Icon from '@/components/AccountBarAccountIcon.vue';
+import AccountBarAccountIcon from '@/components/AccountBarAccountIcon.vue';
 
 export default {
-  components: { Icon },
+  components: { AccountBarAccountIcon },
   props: {
     name: String,
     amount: Number,
@@ -29,13 +29,16 @@ export default {
 
   display: flex;
 
-  cursor: default;
-
   .icon {
     margin-right: 8px;
   }
 
-  .label {
+  .detail {
+    line-height: 1;
+    .name {
+      margin-bottom: 4px;
+      color: var(--text-primary);
+    }
     .amount {
       font-size: 14px;
       color: var(--text-secondary);
@@ -44,6 +47,9 @@ export default {
 
   &.is-active {
     background-color: var(--background-hover);
+    .icon {
+      box-shadow: 0 2px 4px #00000025;
+    }
   }
 
   &:hover {

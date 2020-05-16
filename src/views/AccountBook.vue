@@ -1,10 +1,13 @@
 <template>
-  <div id="account-book">
-    <AccountBar/>
-    <div id="divider"></div>
-    <div id="contents">
-      <TabBar/>
-      <TabTransactions/>
+  <div class="container">
+    <div class="columns is-gapless">
+      <div class="column is-narrow">
+        <AccountBar class="account-bar"/>
+      </div>
+      <div class="column">
+        <TabBar/>
+        <TabTransactions/>
+      </div>
     </div>
   </div>
 </template>
@@ -17,26 +20,11 @@ import TabTransactions from '@/components/TabTransactions.vue';
 export default {
   components: { AccountBar, TabBar, TabTransactions },
 };
-
 </script>
 
 <style lang="scss" scoped>
-#account-book {
-  display: flex;
-  height: 100%;
-  width: 100%;
-
-  user-select: none;
-
-  #divider {
-    background-color: var(--border);
-    cursor: col-resize;
-    height: 100%;
-    width: 1px;
-  }
-
-  #contents {
-    flex-grow: 1;
-  }
+.column.is-narrow {
+  min-width: 300px;
+  border-right: 1px solid var(--border);
 }
 </style>
