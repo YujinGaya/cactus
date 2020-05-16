@@ -14,6 +14,7 @@ export default {
 
 <style lang="scss">
 @use '@/style/minireset';
+@use 'bulma';
 @use '@/style/color-scheme';
 @use '@/style/root';
 </style>
