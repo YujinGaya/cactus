@@ -3,9 +3,13 @@
 </template>
 
 <script lang="ts">
-export default {
-};
+import { useColorScheme } from '@/hooks/colorScheme';
 
+export default {
+  setup() {
+    useColorScheme();
+  },
+};
 </script>
 
 <style lang="scss">

@@ -1,7 +1,8 @@
 <template>
   <div id="logo">
     <picture>
-      <source srcset="@/assets/cactus-dark.png" media="(prefers-color-scheme: dark)">
+      <!-- @TODO: 유저 설정에 따라서도 바뀌도록 -->
+      <!-- <source srcset="@/assets/cactus-dark.png" media="(prefers-color-scheme: dark)"> -->
       <img src="@/assets/cactus.png" alt="선인장 로고">
     </picture>
     <div id="app-name">

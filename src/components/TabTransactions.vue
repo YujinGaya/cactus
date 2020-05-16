@@ -17,7 +17,6 @@ export default {
 
 <style lang="scss" scoped>
 #tab-transactions {
-  min-width: 1085px;
   .transaction {
     padding: 2rem;
   }

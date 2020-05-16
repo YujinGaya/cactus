@@ -1,7 +1,7 @@
 <template>
   <div id="account-book">
     <AccountBar/>
-    <div id="dragger"></div>
+    <div id="divider"></div>
     <div id="contents">
       <TabBar/>
       <TabTransactions/>
@@ -10,19 +10,12 @@
 </template>
 
 <script lang="ts">
-import { onMounted } from 'vue';
 import AccountBar from '@/components/AccountBar.vue';
 import TabBar from '@/components/TabBar.vue';
 import TabTransactions from '@/components/TabTransactions.vue';
-import useDrag from '@/hooks/drag';
 
 export default {
   components: { AccountBar, TabBar, TabTransactions },
-  setup() {
-    onMounted(() => {
-      useDrag('dragger');
-    });
-  },
 };
 
 </script>
@@ -35,7 +28,7 @@ export default {
 
   user-select: none;
 
-  #dragger {
+  #divider {
     background-color: var(--border);
     cursor: col-resize;
     height: 100%;
