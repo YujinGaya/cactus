@@ -1,26 +1,14 @@
 <template>
   <div id="account-bar-accounts-list">
-    <div class="category">
-      <div class="category-name">자산</div>
-      <Account name="카카오뱅크" amount="1,620,350" :has-selected="true"/>
-      <Account name="우리은행" amount="52,200,00" :has-selected="false"/>
-      <Account name="국민은행" amount="273,160" :has-selected="false"/>
-    </div>
-    <div class="category">
-      <div class="category-name">부채</div>
-      <Account name="갚을 돈" amount="62,000" :has-selected="false"/>
-    </div>
-    <div class="category">
-      <div class="category-name">수입</div>
-      <Account name="월급" amount="2,502,680" :has-selected="false"/>
-      <Account name="기타수익" amount="120,000" :has-selected="false"/>
-    </div>
-    <div class="category">
-      <div class="category-name">지출</div>
-      <Account name="식비" amount="480,000" :has-selected="false"/>
-      <Account name="교통비" amount="120,360" :has-selected="false"/>
-      <Account name="월세" amount="470,000" :has-selected="false"/>
-      <Account name="통신비" amount="38,000" :has-selected="false"/>
+    <div v-for="category in ['asset', 'liability', 'income', 'expense']"
+      :key="category"
+      class="category">
+      <div class="category-name">{{ category.toUpperCase() }}</div>
+      <Account v-for="{ id, name, balance } in categories[category]"
+        :key="id"
+        :name="name"
+        :amount="balance"
+        :has-selected="false"/>
     </div>
     <div class="divider"></div>
     <div class="account-controls">
@@ -41,9 +29,14 @@
 
 <script>
 import Account from '@/components/AccountBarAccount.vue';
+import { useLedger } from '@/use/firestore';
 
 export default {
   components: { Account },
+  setup() {
+    const { categories } = useLedger('ledger1');
+    return { categories };
+  },
 };
 </script>
 
@@ -59,6 +52,7 @@ export default {
       padding: 4px 38px;
       color: var(--text-secondary);
       font-size: 14px;
+      font-family: monospace;
     }
   }
 

@@ -15,10 +15,7 @@ npm run serve
 npm run build
 ```
 
-### Lints and fixes files
-```
-npm run lint
-```
+## Terminology
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+- Transaction (tx)
+- Account
