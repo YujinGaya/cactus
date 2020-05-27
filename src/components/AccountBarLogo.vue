@@ -22,6 +22,7 @@ export default {
   display: flex;
   padding: 20px 32px;
   min-height: 76px;
+  font-family: 'Gothic A1';
 
   img {
     height: 36px;
