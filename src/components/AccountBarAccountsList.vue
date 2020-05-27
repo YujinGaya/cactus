@@ -1,13 +1,13 @@
 <template>
   <div id="account-bar-accounts-list">
-    <div v-for="category in ['asset', 'liability', 'income', 'expense']"
-      :key="category"
-      class="category">
-      <div class="category-name">{{ category.toUpperCase() }}</div>
-      <Account v-for="{ id, name, balance } in categories[category]"
+    <div v-for="kind in ['asset', 'liability', 'income', 'expense']"
+      :key="kind"
+      class="kind">
+      <div class="kind-name">{{ kind.toUpperCase() }}</div>
+      <Account v-for="{ id, account } in accountsGroupedByKind[kind]"
         :key="id"
-        :name="name"
-        :amount="balance"
+        :name="account.name"
+        :amount="account.balance"
         :has-selected="false"/>
     </div>
     <div class="divider"></div>
@@ -29,13 +29,14 @@
 
 <script>
 import Account from '@/components/AccountBarAccount.vue';
-import { useLedger } from '@/use/firestore';
+import { setLedgerId, useLedger } from '@/use/firestore';
 
 export default {
   components: { Account },
   setup() {
-    const { categories } = useLedger('ledger1');
-    return { categories };
+    setLedgerId('ledger1');
+    const { accountsGroupedByKind } = useLedger();
+    return { accountsGroupedByKind };
   },
 };
 </script>
@@ -45,10 +46,10 @@ export default {
   position: relative;
   overflow: visible scroll;
 
-  .category {
+  .kind {
     margin-bottom: 20px;
 
-    .category-name {
+    .kind-name {
       padding: 4px 38px;
       color: var(--text-secondary);
       font-size: 14px;

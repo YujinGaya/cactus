@@ -7,6 +7,7 @@
       종류:
       <select v-model="newAccount.kind">
         <option value="asset">자산</option>
+        <option value="equity">순자산</option>
         <option value="liability">부채</option>
         <option value="income">수입</option>
         <option value="expense">지출</option>
@@ -24,7 +25,7 @@ import { useLedger } from '@/use/firestore';
 
 export default {
   setup() {
-    const { ledger, addAccount } = useLedger('ledger1');
+    const { ledger, addAccount } = useLedger();
     const newAccount = reactive({
       name: '',
       balance: 0,

@@ -6,6 +6,8 @@
       </div>
       <div class="column">
         <TabBar/>
+        <ContentNewAccount/>
+        <br/>
         <ContentTransactions/>
       </div>
     </div>
@@ -15,10 +17,13 @@
 <script lang="ts">
 import AccountBar from '@/components/AccountBar.vue';
 import TabBar from '@/components/TabBar.vue';
+import ContentNewAccount from '@/components/ContentNewAccount.vue';
 import ContentTransactions from '@/components/ContentTransactions.vue';
 
 export default {
-  components: { AccountBar, TabBar, ContentTransactions },
+  components: {
+    AccountBar, TabBar, ContentNewAccount, ContentTransactions,
+  },
 };
 </script>
 

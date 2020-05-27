@@ -2,10 +2,13 @@ import * as firebase from 'firebase/app';
 import 'firebase/firestore';
 import { groupBy } from 'lodash-es';
 import {
-  onMounted, onUnmounted, ref, Ref, computed,
+  onMounted, onUnmounted, ref, Ref, computed, watchEffect,
 } from 'vue';
 
 import autoId from '@/../shared/autoId';
+import Ledger from '@/types/Ledger';
+import Account from '@/types/Account';
+import Transaction from '@/types/Transaction';
 
 firebase.initializeApp({
   apiKey: 'AIzaSyA6IPcGnfIIeZ75frMLfYO3WRmXI3n_3RU',
@@ -16,87 +19,106 @@ firebase.initializeApp({
 const db = firebase.firestore();
 db.enablePersistence({ synchronizeTabs: true });
 
-type AccountKind = 'asset' | 'liability' | 'equity' | 'income' | 'expense';
 
-interface Account {
-  name: string;
-  balance: number;
-  kind: AccountKind;
+const ledgerId: Ref<string | undefined> = ref(undefined);
+
+/**
+ * Set `ledgerId` on mount and clear on unmount.
+ * Values of `uesLedger` will be updated according to the set ledgerId
+ */
+export function setLedgerId(newLedgerId: string) {
+  onMounted(() => {
+    ledgerId.value = newLedgerId;
+  });
+
+  onUnmounted(() => {
+    ledgerId.value = undefined;
+  });
 }
 
-interface Ledger {
-  name: string;
-  accounts: {
-    [key: string]: Account;
+/**
+ * Get updated as ledgerId gets updated.
+ */
+const ledger: Ref<Ledger | undefined> = ref(undefined);
+let unsubscribeLedger = () => { /* Nothing to unsubscribe as ledgerId is undefined */ };
+
+watchEffect(() => {
+  if (ledgerId.value) {
+    const ledgerRef = db.doc(`/users/yujingaya/ledgers/${ledgerId.value}`);
+    unsubscribeLedger = ledgerRef.onSnapshot((ledgerDoc) => {
+      ledger.value = ledgerDoc.data() as Ledger;
+    });
+  } else {
+    unsubscribeLedger();
+  }
+});
+
+/**
+ * Map accountId to account.
+ */
+const accounts = computed(() => ledger.value?.accounts ?? {});
+
+/**
+ * Accounts indexed by kind, i.e., asset, equity, income, etc.
+ * Computed property of `ledger`.
+ */
+const accountsGroupedByKind = computed(() => {
+  if (!ledger.value) {
+    return {};
+  }
+
+  return groupBy(Object.entries(ledger.value.accounts).map(([id, account]) => ({
+    id,
+    account,
+  })), 'account.kind');
+});
+
+/**
+ * Add account to current ledger.
+ */
+function addAccount(account: Account) {
+  const ledgerRef = db.doc(`/users/yujingaya/ledgers/${ledgerId.value}`);
+  return ledgerRef.update({
+    [`accounts.${autoId()}`]: account,
+  });
+}
+
+export function useLedger() {
+  return {
+    ledger,
+    accounts,
+    accountsGroupedByKind,
+    addAccount,
   };
 }
 
-// Component <─ useLedger <─ Firestore SDK <─> Firestore Server (/user/{}/ledger/{ledger_id})
-// Component <─ useLedger <┘        ^
-//     └──────────mutation──────────┘
-export function useLedger(ledgerId: string) {
-  const ledger: Ref<Ledger | undefined> = ref(undefined);
-  const ledgerRef = db.doc(`/users/yujingaya/ledgers/${ledgerId}`);
-  let unsubscribe: () => void;
 
-  onMounted(async () => {
-    unsubscribe = ledgerRef.onSnapshot((snapshot) => {
-      ledger.value = snapshot.data() as Ledger;
+// const transactionsQuery // 이게 ledgerId처럼 master? source variable?로 쓰여야할듯. setQuery도 잇어야할거구
+const transactions: Ref<Array<{ id: string; transaction: Transaction }>> = ref([]);
+let unsubscribeTransactions = () => { /* Nothing to unsubscribe */ };
+
+watchEffect(() => {
+  if (ledgerId.value) {
+    const transactionsRef = db.collection(`/users/yujingaya/ledgers/${ledgerId.value}/transactions`);
+    unsubscribeTransactions = transactionsRef.onSnapshot((transactionDocs) => {
+      transactions.value = transactionDocs.docs.map((transactionDoc) => ({
+        id: transactionDoc.id,
+        transaction: transactionDoc.data() as Transaction,
+      }));
     });
-  });
-
-  onUnmounted(() => {
-    unsubscribe();
-  });
-
-  const categories = computed(() => {
-    const accounts = Object.entries(ledger.value?.accounts || {}).map(([key, value]) => ({
-      id: key,
-      ...value,
-    }));
-
-    return groupBy(accounts, 'kind');
-  });
-
-  function addAccount({ name, kind }: { name: string; kind: AccountKind }) {
-    return ledgerRef.update({
-      [`accounts.${autoId()}`]: {
-        name,
-        balance: 0,
-        kind,
-      },
-    });
+  } else {
+    unsubscribeTransactions();
   }
+});
 
-  return { ledger, categories, addAccount };
+function addTransaction(transaction: Transaction) {
+  const transactionsRef = db.collection(`/users/yujingaya/ledgers/${ledgerId.value}/transactions`);
+  return transactionsRef.add(transaction);
 }
 
-interface Transaction {
-  date: number;
-  name: string;
-  amount: number;
-  debit: string;
-  credit: string;
-}
-
-export function useTxs(ledgerId: string) {
-  const txs: Ref<Array<Transaction>> = ref([]);
-  const txsRef = db.collection(`/users/yujingaya/ledgers/${ledgerId}/transactions`);
-  let unsubscribe: () => void;
-
-  onMounted(async () => {
-    unsubscribe = txsRef.onSnapshot((snapshot) => {
-      txs.value = snapshot.docs.map((tx) => tx.data() as Transaction);
-    });
-  });
-
-  onUnmounted(() => {
-    unsubscribe();
-  });
-
-  function addTx(tx: Transaction) {
-    return txsRef.add(tx);
-  }
-
-  return { txs, addTx };
+export function useTransactions() {
+  return {
+    transactions,
+    addTransaction,
+  };
 }
