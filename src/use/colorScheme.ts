@@ -1,26 +1,48 @@
 import {
-  onMounted, ref, Ref, watchEffect,
+  onMounted, ref, Ref, watchEffect, computed,
 } from 'vue';
 
-const root = document.documentElement;
+const KEY_COLOR_SCHEME_PREFERENCE = 'Color Scheme Preference';
+
+const localPreference = localStorage.getItem(KEY_COLOR_SCHEME_PREFERENCE);
 
 /**
- * @todo Read user preference from account settings
+ * Indicates user preference on color preference. One of `light`, `dark` or `system`.
+ *
+ * @example <caption>Update user preference</caption>
+ * import { userPreference } from 'userPreference';
+ * userPreference.value = 'dark'
  */
-const userPreference: Ref<'light' | 'dark' | 'system'> = ref('system');
-const systemPreference = window.matchMedia('(prefers-color-scheme: dark)');
+const userPreference: Ref<'light' | 'dark' | 'system'> = ref(localPreference);
+watchEffect(() => {
+  localStorage.setItem(KEY_COLOR_SCHEME_PREFERENCE, userPreference.value);
+});
+
+const query = window.matchMedia('(prefers-color-scheme: dark)');
+const systemPreference = ref(query.matches ? 'dark' : 'light');
+query.addListener(() => {
+  systemPreference.value = query.matches ? 'dark' : 'light';
+});
+
+/**
+ * Theme based on `userPreference`.
+ */
+const colorScheme = computed(() => {
+  if (userPreference.value === 'light') return 'light';
+  if (userPreference.value === 'dark') return 'dark';
+  if (userPreference.value === 'system' && systemPreference.value === 'dark') {
+    return 'dark';
+  }
+
+  return 'light';
+});
 
 function setClassIsDark() {
-  if (userPreference.value === 'light') {
+  const root = document.documentElement;
+  if (colorScheme.value === 'light') {
     root.classList.remove('is-dark');
-  } else if (userPreference.value === 'dark') {
+  } else {
     root.classList.add('is-dark');
-  } else if (userPreference.value === 'system') {
-    if (systemPreference.matches) {
-      root.classList.add('is-dark');
-    } else {
-      root.classList.remove('is-dark');
-    }
   }
 }
 
@@ -32,17 +54,7 @@ export function useColorScheme() {
     watchEffect(() => {
       setClassIsDark();
     });
-    systemPreference.addListener(() => {
-      setClassIsDark();
-    });
   });
 }
 
-/**
- * Indicates user preference on color preference. One of `light`, `dark` or `system`.
- *
- * @example <caption>Update user preference</caption>
- * import { colorScheme } from 'colorScheme';
- * colorScheme.value = 'dark'
- */
-export const colorScheme = userPreference;
+export { userPreference, colorScheme };

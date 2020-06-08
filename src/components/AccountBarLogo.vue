@@ -1,10 +1,7 @@
 <template>
   <div id="logo">
-    <picture>
-      <!-- @TODO: 유저 설정에 따라서도 바뀌도록 -->
-      <source srcset="@/assets/cactus-dark.png" media="(prefers-color-scheme: dark)">
-      <img src="@/assets/cactus.png" alt="선인장 로고">
-    </picture>
+    <img v-if="colorScheme === 'light'" src="@/assets/cactus.png" alt="선인장 로고">
+    <img v-else src="@/assets/cactus-dark.png" alt="선인장 로고">
     <div id="app-name">
       가계부
     </div>
@@ -12,8 +9,14 @@
 </template>
 
 <script>
-export default {
+import { colorScheme } from '@/use/colorScheme';
 
+export default {
+  setup() {
+    return {
+      colorScheme,
+    };
+  },
 };
 </script>
 
