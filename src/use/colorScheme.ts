@@ -4,7 +4,17 @@ import {
 
 const KEY_COLOR_SCHEME_PREFERENCE = 'Color Scheme Preference';
 
-const localPreference = localStorage.getItem(KEY_COLOR_SCHEME_PREFERENCE);
+const localPreference = ((() => {
+  const value = localStorage.getItem(KEY_COLOR_SCHEME_PREFERENCE);
+  switch (value) {
+    case 'light':
+    case 'dark':
+    case 'system':
+      return value;
+    default:
+      return 'system';
+  }
+}))();
 
 /**
  * Indicates user preference on color preference. One of `light`, `dark` or `system`.
