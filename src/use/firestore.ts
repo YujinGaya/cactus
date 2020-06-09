@@ -83,12 +83,15 @@ function addAccount(account: Account) {
   });
 }
 
+const selectedAccount: Ref<string | undefined> = ref(undefined);
+
 export function useLedger() {
   return {
     ledger,
     accounts,
     accountsGroupedByKind,
     addAccount,
+    selectedAccount,
   };
 }
 
@@ -99,13 +102,20 @@ let unsubscribeTransactions = () => { /* Nothing to unsubscribe */ };
 
 watchEffect(() => {
   if (ledgerId.value) {
-    const transactionsRef = db.collection(`/users/yujingaya/ledgers/${ledgerId.value}/transactions`);
-    unsubscribeTransactions = transactionsRef.onSnapshot((transactionDocs) => {
-      transactions.value = transactionDocs.docs.map((transactionDoc) => ({
-        id: transactionDoc.id,
-        transaction: transactionDoc.data() as Transaction,
-      }));
-    });
+    const transactionsRef = selectedAccount.value
+      ? db
+        .collection(`/users/yujingaya/ledgers/${ledgerId.value}/transactions`)
+        .where('debit', '==', selectedAccount.value)
+      : db
+        .collection(`/users/yujingaya/ledgers/${ledgerId.value}/transactions`);
+
+    unsubscribeTransactions = transactionsRef
+      .onSnapshot((transactionDocs) => {
+        transactions.value = transactionDocs.docs.map((transactionDoc) => ({
+          id: transactionDoc.id,
+          transaction: transactionDoc.data() as Transaction,
+        }));
+      });
   } else {
     unsubscribeTransactions();
   }

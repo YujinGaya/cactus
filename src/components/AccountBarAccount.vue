@@ -52,11 +52,9 @@ export default {
     }
   }
 
-  &:hover {
-    .label {
-      opacity: 0.6;
-      transition: opacity 0.1s;
-    }
+  &:not(.is-active):hover {
+    opacity: 0.7;
+    transition: 0.2s;
   }
 }
 </style>

@@ -1,5 +1,10 @@
 <template>
   <div id="account-bar-accounts-list">
+    <Account
+      name="전체 거래 목록"
+      :amount="0"
+      :has-selected="selectedAccount === undefined"
+      @click="selectedAccount = undefined"/>
     <div v-for="kind in ['asset', 'liability', 'income', 'expense']"
       :key="kind"
       class="kind">
@@ -8,7 +13,8 @@
         :key="id"
         :name="account.name"
         :amount="account.balance"
-        :has-selected="false"/>
+        :has-selected="selectedAccount === id"
+        @click="selectedAccount = id"/>
     </div>
     <div class="divider"></div>
     <div class="account-controls">
@@ -35,8 +41,8 @@ export default {
   components: { Account },
   setup() {
     setLedgerId('ledger1');
-    const { accountsGroupedByKind } = useLedger();
-    return { accountsGroupedByKind };
+    const { accountsGroupedByKind, selectedAccount } = useLedger();
+    return { accountsGroupedByKind, selectedAccount };
   },
 };
 </script>

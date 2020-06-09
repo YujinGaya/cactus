@@ -14,8 +14,3 @@ npm run serve
 ```
 npm run build
 ```
-
-## Terminology
-
-- Transaction (tx)
-- Account

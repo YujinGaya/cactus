@@ -17,7 +17,7 @@ const localPreference = ((() => {
 }))();
 
 /**
- * Indicates user preference on color preference. One of `light`, `dark` or `system`.
+ * User's color scheme preference.
  *
  * @example <caption>Update user preference</caption>
  * import { userPreference } from 'userPreference';
@@ -35,7 +35,7 @@ query.addListener(() => {
 });
 
 /**
- * Theme based on `userPreference`.
+ * Color scheme based on `userPreference` and `systemPreference`.
  */
 const colorScheme = computed(() => {
   if (userPreference.value === 'light') return 'light';
