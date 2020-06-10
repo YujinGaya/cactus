@@ -1,5 +1,5 @@
 <template>
-<div class="transaction">
+<div class="transaction" :class="{ 'is-selected': isSelected }">
   <div class="columns is-mobile is-gapless">
     <div class="column is-6-tablet is-6-mobile">
       {{ transaction.name }}
@@ -25,6 +25,7 @@ export default {
     id: String,
     transaction: Object,
     accounts: Object,
+    isSelected: Boolean,
   },
 };
 </script>
@@ -35,6 +36,9 @@ export default {
   margin: 0 16px;
   padding: 8px 16px;
   &:hover {
+    background-color: var(--background-secondary);
+  }
+  &.is-selected {
     background-color: var(--background-secondary);
   }
 }

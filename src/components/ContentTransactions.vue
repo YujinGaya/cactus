@@ -82,6 +82,10 @@
     <div>
       <ContentTransaction
         v-for="{ id, transaction } in transactions"
+        @click="openTransaction(id)"
+        :is-selected="selectedTransactions
+          && selectedTransactions.kind === 'open'
+          && selectedTransactions.id === id"
         :key="id"
         :transaction="transaction"
         :accounts="accounts"/>
@@ -99,7 +103,13 @@ export default {
   components: { ContentTransaction },
   setup() {
     const { accounts, accountsGroupedByKind } = useLedger();
-    const { transactions, addTransaction } = useTransactions();
+    const {
+      transactions,
+      addTransaction,
+      selectedTransactions,
+      openTransaction,
+    } = useTransactions();
+
     const newTransaction = reactive({
       date: 0,
       name: '',
@@ -109,7 +119,13 @@ export default {
     });
 
     return {
-      accounts, accountsGroupedByKind, transactions, addTransaction, newTransaction,
+      accounts,
+      accountsGroupedByKind,
+      transactions,
+      addTransaction,
+      newTransaction,
+      selectedTransactions,
+      openTransaction,
     };
   },
 };

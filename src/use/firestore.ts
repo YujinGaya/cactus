@@ -126,9 +126,27 @@ function addTransaction(transaction: Transaction) {
   return transactionsRef.add(transaction);
 }
 
+interface Open {
+  kind: 'open';
+  id: string;
+}
+
+interface Select {
+  kind: 'select';
+  ids: Array<string>;
+}
+
+const selectedTransactions: Ref<Open | Select | undefined> = ref(undefined);
+
+function openTransaction(id: string) {
+  selectedTransactions.value = { kind: 'open', id };
+}
+
 export function useTransactions() {
   return {
     transactions,
     addTransaction,
+    selectedTransactions,
+    openTransaction,
   };
 }
